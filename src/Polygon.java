@@ -1,9 +1,18 @@
 import java.util.Arrays;
 
-public class Polygon {
+public class Polygon extends Shape{
     private Point[] points;
 
+    public Polygon(Point[] points, String fillColor, String strokeColor, double strokeWidth)
+    {
+        super(new Style(fillColor, strokeColor, strokeWidth));
+        this.points = points;
+    }
+
+
+
     public Polygon(Point[] points) {
+        super(null);
         this.points = points;
     }
 
@@ -14,11 +23,33 @@ public class Polygon {
                 '}';
     }
 
+    public Polygon(Polygon copyFrom){
+        super(null);
+        this.points = copyFrom.points;
+        Point[] pointsCopy = new Point[this.points.length];
+        Point[] oldPoints = copyFrom.points;
 
+        for (int i = 0; i < pointsCopy.length; i++) {
+            Point newPoint = new Point(oldPoints[i].getX(), oldPoints[i].getY());
+            pointsCopy[i] = newPoint;
+        }
+        this.points = pointsCopy;
+    }
+
+    @Override
     public String toSvg(){
-        return "<polygon points=\"" + listPoints() +
-                "\" " +
-                "style=\"fill:lime;stroke:purple;stroke-width:3\" />";
+        String result = "";
+        if (style != null) {
+            result =  "<polygon points=\"" + listPoints() +
+                    "\" " +
+                    "" + style.toSvg() +
+                    " />";
+        }else{
+            result =  "<polygon points=\"" + listPoints() +
+                    "\" " +
+                    " />";
+        }
+        return result;
     }
 
     public String listPoints(){
@@ -50,5 +81,6 @@ public class Polygon {
 
         return new BoundingBox(minX, minY, width, height);
     }
+
 
 }

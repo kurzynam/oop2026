@@ -8,7 +8,8 @@ public class Main {
                 new Point(50, 80)
         };
 
-        Polygon p1 = new Polygon(triangle);
+        Polygon p1 = new Polygon(triangle,
+                "purple", "yellow", 5);
 
         Point[] square = {
                 new Point(120, 20),
@@ -17,15 +18,15 @@ public class Main {
                 new Point(120, 100)
         };
 
-        Polygon p2 = new Polygon(square);
 
+        Segment s1 = new Segment(new Point(50,150), new Point(100,230));
+
+        Polygon poly = Segment.createSquare(s1);
         SvgScene scene = new SvgScene();
-
-        scene.addPolygon(p1);
-        scene.addPolygon(p2);
-
+        scene.addPolygon(poly);
         scene.save("scene.svg");
-
         System.out.println("SVG zapisany.");
+
+
     }
 }
