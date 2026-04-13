@@ -1,32 +1,42 @@
+import java.io.IOException;
+
 public class Main {
+    public static void main(String[] args) throws IOException {
+        Polygon triangle = new Polygon(new Vec2[]{
+                new Vec2(0, 0),
+                new Vec2(300, 0),
+                new Vec2(150, 250)
+        });
 
-    public static void main(String[] args) throws Exception {
+        Polygon rectangle = new Polygon(new Vec2[]{
+                new Vec2(350, 0),
+                new Vec2(750, 0),
+                new Vec2(750, 200),
+                new Vec2(350, 200)
+        });
 
-        Point[] triangle = {
-                new Point(10, 10),
-                new Point(100, 10),
-                new Point(50, 80)
-        };
+        Polygon pentagon = new Polygon(new Vec2[]{
+                new Vec2(0, 260),
+                new Vec2(100, 460),
+                new Vec2(300, 560),
+                new Vec2(500, 460),
+                new Vec2(600, 260)
+        });
 
-        Polygon p1 = new Polygon(triangle,
-                "purple", "yellow", 5);
+        Ellipse ellipse = new Ellipse(new Vec2(500, 700), 400, 100);
 
-        Point[] square = {
-                new Point(120, 20),
-                new Point(200, 20),
-                new Point(200, 100),
-                new Point(120, 100)
-        };
+        Shape transformed = new TransformationDecorator.Builder()
+                .translate(new Vec2(100, 50))
+                .rotate(70, new Vec2(0, 0))
+                .scale(new Vec2(10, 2))
+                .build(triangle);
 
-
-        Segment s1 = new Segment(new Point(50,150), new Point(100,230));
-
-        Polygon poly = Segment.createSquare(s1);
         SvgScene scene = new SvgScene();
-        scene.addPolygon(poly);
-        scene.save("scene.svg");
-        System.out.println("SVG zapisany.");
+        scene.addShape(transformed);
+        scene.addShape(rectangle);
+        scene.addShape(pentagon);
+        scene.addShape(ellipse);
 
-
+        scene.save("result.svg");
     }
 }

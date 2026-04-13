@@ -1,61 +1,45 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Locale;
 
 public class SvgScene {
-
-    private Polygon[] polygons = new Polygon[3];
     private int index = 0;
+    private Shape[] shapes = new Shape[30];
 
-    public void addPolygon(Polygon p) {
-
-        polygons[index] = p;
-
-        index++;
-        if (index == polygons.length) {
-            index = 0;
-        }
+    public void addShape(Shape shape) {
+        shapes[(index++) % shapes.length] = shape;
     }
 
-    public String toSvg() {
-
-        StringBuilder sb = new StringBuilder();
-
-        for (Polygon p : polygons) {
-            if (p != null) {
-                sb.append(p.toSvg()).append("\n");
-            }
+    private BoundingBox sceneBox() {
+        double maxX = 0, maxY = 0;
+        for(Shape shape: shapes) {
+            if(shape == null)
+                continue;
+            BoundingBox shapeBB = shape.boundingBox();
+            maxX = Math.max(maxX, shapeBB.x() + shapeBB.width());
+            maxY = Math.max(maxY, shapeBB.y() + shapeBB.height());
         }
+        return new BoundingBox(0, 0, maxX, maxY);
+    }
 
-        return sb.toString();
+    public String toSvg()
+    {
+        BoundingBox boundingBox = this.sceneBox();
+        String result = String.format(Locale.ENGLISH,
+                "<svg width=\"%f\" height=\"%f\" xmlns=\"http://www.w3.org/2000/svg\">",
+                boundingBox.width(), boundingBox.height());
+        for(var shape : shapes) {
+            if(shape ==  null)
+                continue;
+            result += "\n\t" + shape.toSvg("");
+        }
+        result += "\n</svg>";
+        return result;
     }
 
     public void save(String path) throws IOException {
-
-        double maxX = 0;
-        double maxY = 0;
-
-        for (Polygon p : polygons) {
-
-            if (p == null) continue;
-
-            BoundingBox b = p.boundingBox();
-
-            double x2 = b.x() + b.width();
-            double y2 = b.y() + b.height();
-
-            if (x2 > maxX) maxX = x2;
-            if (y2 > maxY) maxY = y2;
-        }
-
         FileWriter writer = new FileWriter(path);
-
-        writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" ");
-        writer.write("width=\"" + maxX + "\" height=\"" + maxY + "\">\n");
-
         writer.write(toSvg());
-
-        writer.write("</svg>");
-
         writer.close();
     }
 }
